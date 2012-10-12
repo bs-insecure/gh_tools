@@ -1,0 +1,37 @@
+{% extends "home.html" %}
+{% block head %}
+    <style type="text/css"></style>
+{% endblock %}
+{% block home %} {% endblock %}
+{% block about %}  {% endblock %}
+{% block contact %} {% endblock %}
+{% block login %} class="active" {% endblock %}
+{% block content %}
+<div class="site-content">
+    <div class="page-header">
+        <h1>GH Tools Logon</h1>
+    </div>
+    {% if error %}
+		<div class="alert">
+    		<button type="button" class="close" data-dismiss="alert">×</button>
+    		<strong>Error!</strong> {{ error }}
+    	</div>
+	{% endif %}
+    <form method="post" class="well form-horizontal" id="LoginForm" enctype="multipart/form-data" accept-charset="utf8" action=".">{% csrf_token %}
+  		<div class="row-fluid control-group">
+        	<label class="control-label" for="username">Username:</label>
+      		<div class="controls control-group">
+                {{ form.username }}
+      		</div>
+            <label class="control-label" for="password">Password:</label>
+      		<div class="controls control-group">
+                {{ form.password }}
+      		</div>
+      		<div class="controls control-group">
+      			<input type="submit" value="Submit" />
+      		</div>
+   		</div>
+	</form>
+</div>
+{% endblock %}
+

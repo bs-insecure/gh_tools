@@ -1,4 +1,8 @@
 # Django settings for gh_tools project.
+import os
+
+APP_SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+SITE_ROOT = os.path.abspath(os.path.join(APP_SITE_ROOT, '..'))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -45,13 +49,14 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'site_media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/site_media/'
 
+ADMIN_MEDIA_PREFIX = '/site_media/admin/'
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
@@ -106,6 +111,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(SITE_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -150,3 +156,8 @@ LOGGING = {
         },
     }
 }
+
+try:
+    from local_settings import *
+except:
+    pass
