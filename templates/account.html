@@ -1,0 +1,64 @@
+{% extends "home.html" %}
+{% block head %}
+    <style type="text/css"></style>
+{% endblock %}
+{% block js %}
+    
+ styleForm();
+ var aux = 'test';
+ console.log(aux);
+ ko.applyBindings(new AccountViewModel());
+
+{% endblock %}
+{% block content %}
+{% include 'modal.html' %}
+<div class="site-content">
+    <div class="page-header">
+        <h1>Account Settings</h1>
+    </div>
+    {% if error %}
+		<div class="alert">
+    		<button type="button" class="close" data-dismiss="alert">×</button>
+    		<strong>Error!</strong> {{ error }}
+    	</div>
+	{% endif %}
+    <form method="post" class="well form-horizontal" id="AccountForm" enctype="multipart/form-data" accept-charset="utf8" action=".">{% csrf_token %}
+  		<fieldset>
+        <legend small>Required Information</legend>
+		<div class="row-fluid control-group">
+            <label for="username">Username:</label>
+            <input type="text" value= {{user.username}} disabled="disabled" name="username">
+        </div>
+ 		<div class="row-fluid control-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" data-bind="value: first_name" name="first_name">
+        </div>
+		<div class="row-fluid control-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" data-bind="value: last_name" name="last_name">
+        </div>
+        <div class="row-fluid control-group">
+            <label for="email">Email:</label>
+            <input type="text" data-bind="value: email" name="email">
+        </div>
+		<div class="row-fluid control-group">
+            <label for="password_old">Old Password:</label>
+            <input type="text" data-bind="value: password_old" name="password_old">
+        </div>     
+		<div class="row-fluid control-group">
+            <label for="password_new">New Password:</label>
+            <input type="text" data-bind="value: password_new" name="password_new">
+        </div>   
+		<div class="row-fluid control-group">
+            <label for="password_check">Retype New Password:</label>
+            <input type="text" data-bind="value: password_check" name="password_check">
+        </div>                      
+ 	</fieldset>
+  		
+	<div class="controls control-group">
+		<input type="submit" value="Submit" />
+	</div>
+	</form>
+</div>
+{% endblock %}
+

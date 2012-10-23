@@ -1,0 +1,15 @@
+<a class="btn" id="modal-btn" data-toggle="modal" data-backdrop="static" href="#myModal" style="display: none;" ></a>
+
+<div class="modal" id="myModal" style="display:none;">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal" data-bind="visible: modal().isDismissVisible">×</button>
+        <h3 id="modal-info" data-bind="text: modal().info"></h3>
+    </div>
+    <div class="modal-body">
+        <p id='modal-message' data-bind="html: modal().message"></p>
+    </div>
+    <div class="modal-footer" id="mymodal-footer">
+        <p data-bind="visible: !modal().isDismissVisible, html: modal().footer"></p>
+        <button id="close-mymodal" class="btn btn-primary" data-dismiss="modal" data-bind="visible: modal().isDismissVisible">Close</button>
+    </div>
+</div>
