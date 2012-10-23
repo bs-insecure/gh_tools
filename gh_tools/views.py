@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render_to_response
-from forms import LoginForm
+from forms import LoginForm, AccountForm
 from django.template import RequestContext
 
 def about_page(request):
@@ -16,7 +16,27 @@ def home(request):
 def logout_page(request):
     logout(request)    
     return HttpResponseRedirect('/home/')
-    
+
+def account_page(request):
+    def errorHandle(error):
+        form = AccountForm()
+        return render_to_response('login.html', {
+                'error' : error,
+                'form' : form,
+        }, RequestContext(request))
+    if request.method == 'POST': # If the form has been submitted...
+        form = AccountForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            print(form.cleaned_data)
+        else:
+            error = u'form is invalid'
+            return errorHandle(error)
+    else:
+        form = AccountForm() # An unbound form
+        return render_to_response('account.html', {
+            'form': form,
+        }, RequestContext(request))
+            
 def login_page(request):
     def errorHandle(error):
         form = LoginForm()

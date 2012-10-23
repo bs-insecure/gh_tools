@@ -14,6 +14,7 @@ urlpatterns = patterns('',
      url(r'^home/$', 'gh_tools.views.home'),
      url(r'^login/$', 'gh_tools.views.login_page'),
      url(r'^logout/$', 'gh_tools.views.logout_page'),
+     url(r'^account/$', 'gh_tools.views.account_page'),
     # url(r'^gh_tools/', include('gh_tools.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
