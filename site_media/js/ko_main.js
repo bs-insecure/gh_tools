@@ -1,6 +1,5 @@
 function styleForm(){
     // apply styling to form elements
-	console.log('test');
     $('input').attr('autocomplete', 'off');
     $('label').addClass('span2');
     $('input, select, textarea').addClass('input-xlarge');
@@ -10,7 +9,7 @@ function styleForm(){
 // custom configuration for knockout validation plugin
 // see https://github.com/ericmbarnard/Knockout-Validation
 ko.validation.configure({
-    errorMessageClass: 'help-inline',
+    errorMessageClass: 'help-inline error',
     errorElementClass: 'error',
     decorateElement: true
 })
@@ -30,6 +29,13 @@ ko.validation.rules['isInt'] = {
     },
     message: 'An integer value is required.'
 }
+
+ko.validation.rules['mustEqual'] = {
+	    validator: function (val, otherVal) {
+	        return val === otherVal;
+	    },
+	    message: 'The field must equal {0}'
+	};
 
 ko.validation.rules['isLater'] = {
 	validator: function (value, validate) {
@@ -66,6 +72,29 @@ ko.validation.rules['isIPRange'] = {
 
 ko.validation.registerExtenders();
 
+
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 //ko model
 //feed the error property with a value and all other properties
 //change their values accordingly
@@ -83,6 +112,7 @@ function Modal(){
  self.error.subscribe(function(val){
      $('.modal').css('width', '400px');
      self.isDismissVisible(true);
+     console.log('..', val);
      if (val === 'ok'){
          self.isDismissVisible(false);
          self.info("Please wait ...")
@@ -91,7 +121,7 @@ function Modal(){
      }
      else {
          self.info('Error!');
-         self.message("<b>An error occurred </b>");
+         self.message("<b>An error occurred: "+val+" </b>");
      }
  });
 
@@ -106,33 +136,75 @@ function Modal(){
 function AccountViewModel()
 {
 	var self = this;
-	self.first_name = ko.observable('test');
-	self.last_name = ko.observable();
-	self.email = ko.observable();
+	self.modal = ko.observable(new Modal());
+	self.username = ko.observable(user_username);
+	self.first_name = ko.observable(user_first_name);
+	self.last_name = ko.observable(user_last_name);
+	self.email = ko.observable(user_email).extend({ email: true });
 	
-	self.password_old = ko.observable();
+	self.password_old = ko.observable().extend({required: true});
 	self.password_new = ko.observable();
 	self.password_check = ko.observable();
 	
+	self.response_status = ko.observable();
+	self.response_message = ko.observable();
+	
 	self.errors = ko.validation.group(self);
 	
-	self.first_name.subscribe(function(val){
-		self.last_name(val);
+	self.password_new.subscribe(function(val){
+	   self.password_check.rules.remove(function(x) { return x.rule === "mustEqual" });
+       self.password_check.extend({ mustEqual: { message: 'The passwords must match.',
+	                                         params: self.password_new()}});
+	})
+	
+	self.response_status.subscribe(function(val){
+		if (val == 'success'){
+			$("#AccountForm :input").attr("disabled", true);
+		}
 	})
 	
 	self.countErrors = function(){
-		return self.errors.length
+		return self.errors().length
 	}
 	
-	self.postData = function(){
+	self.post_data = function(){
 		return {
 				first_name: self.first_name(),
 				last_name: self.last_name(),
-				email: self.mail(),
+				email: self.email(),
 				password_old: self.password_old(),
-				password_new: self.password_new
+				password_new: self.password_new(),
+				username: self.username()
 		}
 	}
+	
+	self.showAllErrors = function(){
+		self.errors.showAllMessages();
+	}
+	
+	self.submit = function() {
+        if (self.countErrors() > 0){
+            self.showAllErrors();
+        }
+        else {
+        	var csrftoken = getCookie('csrftoken');
+        	
+        	$.ajaxSetup({
+        	    crossDomain: false, // obviates need for sameOrigin test
+        	    beforeSend: function(xhr, settings) {
+        	        if (!csrfSafeMethod(settings.type)) {
+        	            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        	        }
+        	    }
+        	});
+            $.post( '/account/', $.param(ko.toJS(self.post_data()), true), function(data){
+                response = $.parseJSON(data);
+                self.response_status(response.status);
+                self.response_message(response.message);
+                }
+            );
+        }
+    }
 	
 }
 

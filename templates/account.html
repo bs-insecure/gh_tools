@@ -5,9 +5,11 @@
 {% block js %}
     
  styleForm();
- var aux = 'test';
- console.log(aux);
- ko.applyBindings(new AccountViewModel());
+ user_username = "{{user.username}}";
+ user_email = "{{user.email}}";
+ user_first_name = "{{user.first_name}}";
+ user_last_name = "{{user.last_name}}";
+ ko.applyBindings(new AccountViewModel()); 
 
 {% endblock %}
 {% block content %}
@@ -43,20 +45,25 @@
         </div>
 		<div class="row-fluid control-group">
             <label for="password_old">Old Password:</label>
-            <input type="text" data-bind="value: password_old" name="password_old">
+            <input type="password" data-bind="value: password_old" name="password_old">
         </div>     
 		<div class="row-fluid control-group">
             <label for="password_new">New Password:</label>
-            <input type="text" data-bind="value: password_new" name="password_new">
+            <input type="password" data-bind="value: password_new" name="password_new">
         </div>   
 		<div class="row-fluid control-group">
             <label for="password_check">Retype New Password:</label>
-            <input type="text" data-bind="value: password_check" name="password_check">
+            <input type="password" data-bind="value: password_check" name="password_check">
         </div>                      
  	</fieldset>
-  		
-	<div class="controls control-group">
-		<input type="submit" value="Submit" />
+	 <div class = "alert alert-error" data-bind="visible: response_status() == 'error'">
+	 	<strong>Error! </strong><span data-bind="text: response_message()"></span>
+	 </div>  
+	 <div class = "alert alert-success" data-bind="visible: response_status() == 'success'">
+	 	<strong>Success</strong>The information was successfully updated.
+	 </div>  	 		
+	<div class="controls control-group" data-bind="visible: response_status() != 'success'">
+		<a class="btn btn-primary" data-bind="click: submit" onclick="return false;">Submit</a>
 	</div>
 	</form>
 </div>
