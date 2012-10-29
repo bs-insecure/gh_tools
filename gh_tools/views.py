@@ -2,11 +2,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
-from forms import LoginForm, AccountForm
 from django.template import RequestContext
-from django.http import HttpResponse
+from django.core.urlresolvers import reverse
+from forms import LoginForm, AccountForm, ArticlePackForm
+from models import ArticlePackModel
 from functools import wraps
-
 import json
 
 
@@ -106,3 +106,22 @@ def login_page(request):
     else:
         form = LoginForm() # An unbound form
         return render_to_response('login.html', {'form': form,}, context_instance=RequestContext(request))
+    
+def upload_article(request):
+    print(request)
+    if request.method == 'POST':
+        form = ArticlePackForm(request.POST, request.FILES)
+        if form.is_valid():
+            newarticle = ArticlePackModel(packfile = request.FILES['packfile'], description = request.POST['description'], processed = False)
+            newarticle.save()
+            return HttpResponseRedirect('/upload_article/')
+    else:
+        form = ArticlePackForm()
+
+    packs = ArticlePackModel.objects.all()
+
+    return render_to_response(
+        'upload_article.html',
+        {'packs': packs, 'form': form},
+        context_instance=RequestContext(request)
+    )

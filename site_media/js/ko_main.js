@@ -133,6 +133,16 @@ function Modal(){
  });
 }
 
+function loadForm(url, el, loader){
+    el.hide();
+    loader.show();
+    $.get(url, function(data){
+        el.html(data);
+        loader.hide();
+        el.fadeIn(1000);
+    });
+}
+
 function AccountViewModel()
 {
 	var self = this;

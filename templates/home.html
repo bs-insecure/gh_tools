@@ -21,6 +21,7 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <script src="../site_media/js/jquery-1.8.2.min.js"></script>
+    <script src="../site_media/js/jquery.form.js"></script>    
     <script src="../site_media/js/bootstrap.js"></script>
     <script src="../site_media/js/bootstrap.min.js"></script>
     <script src="../site_media/js/knockout-2.1.0.js"></script>
@@ -31,6 +32,13 @@
 	    	$("li .active").removeClass('active');
 	    	$("a[href='" + window.location.pathname + "']").parent().addClass('active');
 	    	$('.dropdown-toggle').dropdown();
+	    	
+	    	var formContainer = $("#form_container");
+            var loader = $("#loading-placeholder");
+
+            $('#upload_article_tar').click(function(){
+                loadForm('/upload_article/', formContainer, loader);
+            });
 
 	    	{% block js %}
 	    	{% endblock %}
@@ -73,11 +81,34 @@
       		</div>
     	</div>
 
-    <div class="container">
+ <div class="container-fluid">
 	{% block content %}
 	{% if user.is_authenticated %}
-    	<h1>More stuff here.</h1>
-    	<p>Here goes the cool stuff.</p>
+              <div class="row-fluid">
+                <div class="span2">
+                    <div class="well sidebar-nav">
+                        <ul class="nav nav-list">
+                            <li class="nav-header">Articles</li>
+                            <li><a id="upload_article_tar">Upload articles</a></li>
+                            <li><a id="upload_article_tar">Manage articles</a></li>
+                        </ul>
+                        <ul class="nav nav-list">
+                            <li class="nav-header">Blogs</li>
+                            <li><a id="add_blog">Add blogs</a></li>
+                        </ul>
+                        <ul class="nav nav-list">
+                            <li class="nav-header">Jobs</li>
+                            <li><a id="manage_jobs">Manage jobs</a></li>
+                        </ul>
+                        <br/>
+                    </div>
+                </div>
+                <div class="span8" id="loading-placeholder" style="display:none;">Loading...</div>
+                <div class="span8" id="form_container">
+                	{% include "welcome_message.html" %}
+                </div>
+            </div>
+    	
     {% else %}
        	<h1>Please login.</h1>
     	<p>You will see cool stuff.</p>

@@ -1,0 +1,61 @@
+{% block head %}
+    <style type="text/css"></style>
+	<title>Upload article pack</title>  
+	<script type="text/javascript">  
+		$(document).ready(function() { 
+		    var jquery_form_options = {target:'#form_container'};
+    		$('#upload_article_form').ajaxForm(jquery_form_options);
+		});
+	</script>
+{% endblock %}
+{% block content %}
+	<fieldset>
+	<legend>Article packs</legend>
+	{% if packs %}
+	<table class="table" id="ArticlePacksTable" style="font-size: 11px;">
+    	<thead>
+        	<tr>
+            	<th class="span1">Date</th>
+            	<th class="span1">Description</th>
+            	<th class="span1">Name</th>
+            	<th class="span1">Processed</th>
+            </tr>
+        </thead>
+		{% for pack in packs %}
+		<tr>
+			<td>{{ pack.submit }}</td>
+			<td>{{ pack.description }}</td>
+			<td><a href="{{ pack.packfile.url }}">{{ pack.packfile.name }}</a></td>
+			<td><a href="/process_pack/{{ pack.id }}/">{{ pack.processed }}</td>							
+		</tr>
+		{% endfor %}
+	</table>
+	{% else %}
+		<p>No article packs.</p>
+	{% endif %}
+	</fieldset>
+	<fieldset>
+	<legend>Upload article pack</legend>
+	<form id="upload_article_form" action="/upload_article/" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		<p>{{ form.non_field_errors }}</p>
+		<p>{{ form.description.label_tag }}</p>
+		<p>
+			{{ form.description.errors }}
+			{{ form.description }}
+		</p>		
+		<p>{{ form.packfile.label_tag }}</p>
+		<p>
+			{{ form.packfile.errors }}
+			{{ form.packfile }}
+		</p>
+		<p><input type="submit" value="Upload" /></p>
+	</form>
+	</fieldset>
+{% endblock %}
+
+
+
+
+
+

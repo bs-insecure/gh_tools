@@ -12,3 +12,6 @@ class AccountForm(forms.Form):
     password_new = forms.CharField(widget=forms.PasswordInput(render_value=False),max_length=100, required=False)    
     password_old = forms.CharField(widget=forms.PasswordInput(render_value=False),max_length=100, required=False) 
     
+class ArticlePackForm(forms.Form):
+    packfile = forms.FileField(label='Select a file')
+    description = forms.CharField(label='Article pack description')
