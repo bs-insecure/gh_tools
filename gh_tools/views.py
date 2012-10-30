@@ -5,9 +5,10 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from forms import LoginForm, AccountForm, ArticlePackForm
-from models import ArticlePackModel
+from models import ArticlePackModel, ArticleModel
 from functools import wraps
 import json
+import tarfile
 
 
 def json_view(func):
@@ -77,7 +78,7 @@ def account_page(request):
         else:
             return {'status':'error', 'message':'Invalid form!'}
     else:
-        form = AccountForm() # An unbound form
+        form = AccountForm() 
         return render_to_response('account.html', {'form': form,}, context_instance=RequestContext(request))
             
 def login_page(request):
@@ -112,8 +113,8 @@ def upload_article(request):
     if request.method == 'POST':
         form = ArticlePackForm(request.POST, request.FILES)
         if form.is_valid():
-            newarticle = ArticlePackModel(packfile = request.FILES['packfile'], description = request.POST['description'], processed = False)
-            newarticle.save()
+            newpack = ArticlePackModel(packfile = request.FILES['packfile'], description = request.POST['description'], processed = False)
+            newpack.save()
             return HttpResponseRedirect('/upload_article/')
     else:
         form = ArticlePackForm()
@@ -125,3 +126,28 @@ def upload_article(request):
         {'packs': packs, 'form': form},
         context_instance=RequestContext(request)
     )
+
+@json_view
+def process_pack(request, pack_id=None):
+    if pack_id:
+        pack = ArticlePackModel.objects.get(id = pack_id)
+        if pack:
+            try:
+                tar = tarfile.open(pack.packfile.path, 'r:tar')
+                members = tar.getmembers()
+                for member in members:
+                    if member.isfile and member.size > 0 :
+                        title = member.name
+                        while '/' in title:
+                            title = title[title.index('/')+1:]
+                        if '.' in title:
+                            title = title[0:title.index('.')]
+                        newarticle = ArticleModel(title = title, text = tar.extractfile(member.name).read())
+                        newarticle.save()
+                pack.processed = True
+                pack.save()
+                return {'status':'success'}
+            except Exception:
+                return {'status':'error'}
+    return {'status': 'error'}
+        

@@ -5,6 +5,14 @@
 		$(document).ready(function() { 
 		    var jquery_form_options = {target:'#form_container'};
     		$('#upload_article_form').ajaxForm(jquery_form_options);
+    		
+    		$('[id^="pack"]').click(function(){
+    			var $this = $(this);
+    			$.getJSON('/process_pack/'+ $this.attr("name") +'/',function(data){
+			         status = data.status;
+					 if (status == 'success') { loadForm('/upload_article/', $("#form_container"), $("#loading-placeholder"))}
+ 					});
+            });
 		});
 	</script>
 {% endblock %}
@@ -26,7 +34,11 @@
 			<td>{{ pack.submit }}</td>
 			<td>{{ pack.description }}</td>
 			<td><a href="{{ pack.packfile.url }}">{{ pack.packfile.name }}</a></td>
-			<td><a href="/process_pack/{{ pack.id }}/">{{ pack.processed }}</td>							
+			{% if not pack.processed %}
+			<td><a id="pack" name="{{ pack.id }}">{{ pack.processed }}</td>
+			{% else %}			
+			<td>{{ pack.processed }}</td>		
+			{% endif %}		
 		</tr>
 		{% endfor %}
 	</table>
