@@ -1,0 +1,49 @@
+{% block head %}
+    <style type="text/css">
+    .myclass {
+            width: 600px;
+        }
+    </style>
+	<title>Upload article pack</title>  
+	<script type="text/javascript">  
+		$(document).ready(function() { 
+			$("#example").popover({
+				    trigger: 'hover',
+				    template: '<div class="popover"><div class="arrow"></div><div class="popover-inner myclass"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'
+			});
+		});
+	</script>
+{% endblock %}
+{% block content %}
+
+	<fieldset>
+	<legend>Articles </legend>
+	
+	{% if articles %}
+	<table class="table" id="ArticlePacksTable" style="font-size: 11px;">
+    	<thead>
+        	<tr>
+            	<th class="span1">Title</th>
+            	<th class="span1">Slug</th>
+            	<th class="span1">Text</th>
+            </tr>
+        </thead>
+		{% for article in articles %}
+		<tr>
+			<td>{{ article.title }}</td>
+			<td>{{ article.slug }}</td>
+			<td><a href="#" id="example" rel="popover" data-content="{{article.text}}" data-original-title="Twitter Bootstrap Popover">hover for popover</a></td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% else %}
+		<p>No articles.</p>
+	{% endif %}
+	</fieldset>
+{% endblock %}
+
+
+
+
+
+

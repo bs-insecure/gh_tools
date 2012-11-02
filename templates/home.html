@@ -39,6 +39,9 @@
             $('#upload_article_tar').click(function(){
                 loadForm('/upload_article/', formContainer, loader);
             });
+            $('#manage_articles').click(function(){
+                loadForm('/manage_articles/', formContainer, loader);
+            });
             
 	    	{% block js %}
 	    	{% endblock %}
@@ -90,7 +93,7 @@
                         <ul class="nav nav-list">
                             <li class="nav-header">Articles</li>
                             <li><a id="upload_article_tar">Upload articles</a></li>
-                            <li><a id="upload_article_tar">Manage articles</a></li>
+                            <li><a id="manage_articles">Manage articles</a></li>
                         </ul>
                         <ul class="nav nav-list">
                             <li class="nav-header">Blogs</li>

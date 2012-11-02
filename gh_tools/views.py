@@ -127,6 +127,11 @@ def upload_article(request):
         context_instance=RequestContext(request)
     )
 
+def manage_articles(request):
+    articles = ArticleModel.objects.all()
+    return render_to_response('manage_articles.html',
+        {'articles': articles}, context_instance=RequestContext(request))
+
 @json_view
 def process_pack(request, pack_id=None):
     if pack_id:
