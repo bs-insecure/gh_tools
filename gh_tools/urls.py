@@ -16,6 +16,8 @@ urlpatterns = patterns('',
      url(r'^logout/$', 'gh_tools.views.logout_page'),
      url(r'^account/$', 'gh_tools.views.account_page'),
      url(r'^upload_article/$', 'gh_tools.views.upload_article'),
+     url(r'^manage_articles/$', 'gh_tools.views.manage_articles'),
+     url(r'^manage_blogs/$', 'gh_tools.views.manage_blogs'),
      url(r'^process_pack/(?P<pack_id>.*)/$', 'gh_tools.views.process_pack'),
     # url(r'^gh_tools/', include('gh_tools.foo.urls')),
 

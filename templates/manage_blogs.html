@@ -1,0 +1,87 @@
+{% block head %}
+    <style type="text/css"></style>
+    <title>Manage blogs</title>  
+    <script type="text/javascript">  
+        $(document).ready(function() { 
+            var jquery_form_options = {target:'#form_container'};
+            $('#add_blog_form').ajaxForm(jquery_form_options);
+        });
+    </script>
+{% endblock %}
+{% block content %}
+    <fieldset>
+    <legend>Blog Management </legend>
+    {% if blogs %}
+    <table class="table" id="BlogsTable" style="font-size: 11px;">
+        <thead>
+            <tr>
+                <th class="span1">Address</th>
+                <th class="span1">Niche</th>
+                <th class="span1">User</th>
+                <th class="span1">Password</th>
+                <th class="span1">Actions</th>
+            </tr>
+        </thead>
+        {% for blog in blogs %}
+        <tr>
+            <td>{{ blog.address }}</td>
+            <td>{{ blog.niche.name }}</td>
+            <td>{{ blog.user }}</td>
+            <td>{{ blog.password }}</td>
+            <td>
+                <a id="edit" ><img src="../site_media/img/edit.png"></a>
+                <a id="remove" ><img src="../site_media/img/remove.png"></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No registred blogs.</p>
+    {% endif %}
+    </fieldset>
+
+    <fieldset>
+    <legend>Add new blog</legend>
+    <form id="add_blog_form" class="form-horizontal" action="/manage_blogs/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ form.non_field_errors }}</p>
+        <table class="table">
+            <tr>
+                <td>
+                 <div class="control-group">
+                    <label class="control-label" for="inputEmail">{{ form.address.label_tag }}</label>
+                    <div class="controls">
+                        {{ form.address }}
+                        {{ form.address.errors }}
+                    </div>
+                 </div>
+                 <div class="control-group">
+                    <label class="control-label" for="inputEmail">{{ form.username.label_tag }}</label>
+                    <div class="controls">
+                        {{ form.username }}
+                        {{ form.username.errors }}
+                    </div>
+                 </div>
+		        </td>
+                <td>
+                 <div class="control-group">
+                    <label class="control-label" for="inputEmail">{{ form.niche.label_tag }}</label>
+                    <div class="controls">
+                        {{ form.niche }}
+                        {{ form.niche.errors }}
+                    </div>
+                 </div>
+                 <div class="control-group">
+                    <label class="control-label" for="inputEmail">{{ form.password.label_tag }}</label>
+                    <div class="controls">
+                        {{ form.password }}
+                        {{ form.password.errors }}
+                    </div>
+                 </div>
+                </td>
+	        </tr>
+        </table>
+        <p><input type="submit" value="Submit"/></p>
+    </form>
+    </fieldset>
+{% endblock %}
