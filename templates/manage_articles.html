@@ -1,15 +1,15 @@
 {% block head %}
     <style type="text/css">
     .myclass {
-            width: 600px;
+            width: 400px;
         }
     </style>
-	<title>Upload article pack</title>  
+	<title>Manage articles</title>  
 	<script type="text/javascript">  
 		$(document).ready(function() { 
-			$("#example").popover({
+			$('[name^="example"]').popover({
 				    trigger: 'hover',
-				    template: '<div class="popover"><div class="arrow"></div><div class="popover-inner myclass"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'
+				    template: '<div class="popover myclass"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'
 			});
 		});
 	</script>
@@ -20,10 +20,11 @@
 	<legend>Articles </legend>
 	
 	{% if articles %}
-	<table class="table" id="ArticlePacksTable" style="font-size: 11px;">
+	<table class="table" id="ArticleTable" style="font-size: 11px;">
     	<thead>
         	<tr>
             	<th class="span1">Title</th>
+            	<th class="span1">Niche</th>
             	<th class="span1">Slug</th>
             	<th class="span1">Text</th>
             </tr>
@@ -31,8 +32,9 @@
 		{% for article in articles %}
 		<tr>
 			<td>{{ article.title }}</td>
+			<td>{{ article.niche.name }} </td>
 			<td>{{ article.slug }}</td>
-			<td><a href="#" id="example" rel="popover" data-content="{{article.text}}" data-original-title="Twitter Bootstrap Popover">hover for popover</a></td>
+			<td><a href="#" name="example" rel="popover" data-content="{{article.text}}" data-original-title="Article preview">hover for popover</a></td>
 		</tr>
 		{% endfor %}
 	</table>

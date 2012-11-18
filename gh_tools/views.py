@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-from forms import LoginForm, AccountForm, ArticlePackForm
-from models import ArticlePackModel, ArticleModel
+from forms import LoginForm, AccountForm, ArticlePackForm, BlogForm
+from models import ArticlePackModel, ArticleModel, NicheModel, BlogModel
 from functools import wraps
 import json
 import tarfile
@@ -109,11 +109,14 @@ def login_page(request):
         return render_to_response('login.html', {'form': form,}, context_instance=RequestContext(request))
     
 def upload_article(request):
-    print(request)
     if request.method == 'POST':
         form = ArticlePackForm(request.POST, request.FILES)
         if form.is_valid():
-            newpack = ArticlePackModel(packfile = request.FILES['packfile'], description = request.POST['description'], processed = False)
+            niche = NicheModel.objects.get(id=int(request.POST['niche']))
+            newpack = ArticlePackModel(packfile = request.FILES['packfile'], 
+                                       description = request.POST['description'], 
+                                       processed = False, 
+                                       niche=niche)
             newpack.save()
             return HttpResponseRedirect('/upload_article/')
     else:
@@ -124,13 +127,32 @@ def upload_article(request):
     return render_to_response(
         'upload_article.html',
         {'packs': packs, 'form': form},
-        context_instance=RequestContext(request)
-    )
+        context_instance=RequestContext(request))
 
 def manage_articles(request):
     articles = ArticleModel.objects.all()
+    for article in articles:
+        article.text = "%s..."%(article.text[:600])
     return render_to_response('manage_articles.html',
         {'articles': articles}, context_instance=RequestContext(request))
+
+def manage_blogs(request):
+    if request.method == 'POST':
+        form = BlogForm(request.POST)
+        if form.is_valid():
+            niche = NicheModel.objects.get(id=int(request.POST['niche']))
+            newblog = BlogModel(address=request.POST['address'],
+                                user=request.POST['username'],
+                                password=request.POST['password'],
+                                niche=niche)
+            newblog.save()
+            return HttpResponseRedirect('/manage_blogs/')
+    else:
+        form = BlogForm()
+
+    blogs = BlogModel.objects.all()
+    return render_to_response('manage_blogs.html',
+        {'blogs': blogs, 'form': form}, context_instance=RequestContext(request))
 
 @json_view
 def process_pack(request, pack_id=None):
@@ -147,7 +169,7 @@ def process_pack(request, pack_id=None):
                             title = title[title.index('/')+1:]
                         if '.' in title:
                             title = title[0:title.index('.')]
-                        newarticle = ArticleModel(title = title, text = tar.extractfile(member.name).read())
+                        newarticle = ArticleModel(title = title, text = tar.extractfile(member.name).read(), niche=pack.niche)
                         newarticle.save()
                 pack.processed = True
                 pack.save()
