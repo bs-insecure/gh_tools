@@ -1,0 +1,41 @@
+{% block head %}
+    <style type="text/css"></style>
+    <title>Page Rank Checker</title>  
+    <script type="text/javascript">  
+        $(document).ready(function() { 
+            var jquery_form_options = {target:'#form_container'};
+            $('#pr_check_form').ajaxForm(jquery_form_options);
+        });
+    </script>
+{% endblock %}
+{% block content %}
+
+	<fieldset>
+	<legend>Page Rank Checker </legend>
+
+		<form class="form-horizontal" id="pr_check_form" action="/pr_check/" method="post">
+		{% csrf_token %}
+		  <div class="control-group">
+		    <label class="control-label" for="urlToCheck">Target page URL</label>
+		    <div class="controls">
+		      <input type="text" name="urlToCheck" id="urlToCheck" placeholder="URL">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <div class="controls">
+		      <button type="submit" class="btn">Check</button>
+		    </div>
+		  </div>
+		</form>
+		{% if target %}
+		The page rank for {{ target }} is {{ page_rank }}
+		{% endif %}
+    
+    </fieldset>
+{% endblock %}
+
+
+
+
+
+

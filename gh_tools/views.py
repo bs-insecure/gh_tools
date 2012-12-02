@@ -10,6 +10,8 @@ from functools import wraps
 import json
 import tarfile
 
+from scripts import GetPageRank, bing_grab
+
 
 def json_view(func):
     """
@@ -177,4 +179,16 @@ def process_pack(request, pack_id=None):
             except Exception:
                 return {'status':'error'}
     return {'status': 'error'}
-        
+
+
+def pr_check(request):
+    if request.method == 'POST':
+        url = request.POST.get('urlToCheck', None)
+        if url:
+            page_rank = GetPageRank(url)
+            return render_to_response('pr_check.html',
+            {'page_rank': page_rank, 'target': url}, context_instance=RequestContext(request))
+        return HttpResponseRedirect('/pr_check/')
+    else:
+        return render_to_response('pr_check.html',
+            {}, context_instance=RequestContext(request))
