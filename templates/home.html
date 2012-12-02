@@ -48,6 +48,9 @@
             $('#pr_check').click(function(){
                 loadForm('/pr_check/', formContainer, loader);
             });
+            $('#bing_grab').click(function(){
+                loadForm('/bing_grab/', formContainer, loader);
+            });
             
 	    	{% block js %}
 	    	{% endblock %}
@@ -108,6 +111,7 @@
                         <ul class="nav nav-list">
                             <li class="nav-header">Tools</li>
                             <li><a id="pr_check">Page Rank Check</a></li>
+                            <li><a id="bing_grab">Bing Grabber</a></li>
                         </ul>
                         <ul class="nav nav-list">
                             <li class="nav-header">Jobs</li>

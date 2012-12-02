@@ -1,0 +1,46 @@
+{% block head %}
+    <style type="text/css"></style>
+    <title>Bing Grabber</title>  
+    <script type="text/javascript">  
+        $(document).ready(function() { 
+            var jquery_form_options = {target:'#form_container'};
+            $('#bing_grab_form').ajaxForm(jquery_form_options);
+        });
+    </script>
+{% endblock %}
+{% block content %}
+
+	<fieldset>
+	<legend>Bing Grabber </legend>
+
+		<form class="form-horizontal" id="bing_grab_form" action="/bing_grab/" method="post">
+		{% csrf_token %}
+		  <div class="control-group">
+		    <label class="control-label" for="subjectToGrab">Subject to grab:</label>
+		    <div class="controls">
+		      <input type="text" name="subjectToGrab" id="subjectToGrab" placeholder="subject">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <div class="controls">
+		      <button type="submit" class="btn">Grab</button>
+		    </div>
+		  </div>
+		</form>
+		{% if data %}
+		<div>
+		  <h4>Grabbing: {{ subject }}</h4>
+		  {% for d in data %}
+		      <p><a href="{{ d }}">{{ d }}</a>
+		  {% endfor %}
+		</div>
+		{% endif %}
+    
+    </fieldset>
+{% endblock %}
+
+
+
+
+
+

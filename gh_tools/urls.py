@@ -19,6 +19,7 @@ urlpatterns = patterns('',
      url(r'^manage_articles/$', 'gh_tools.views.manage_articles'),
      url(r'^manage_blogs/$', 'gh_tools.views.manage_blogs'),
      url(r'^pr_check/$', 'gh_tools.views.pr_check'),
+     url(r'^bing_grab/$', 'gh_tools.views.bing_grabber'),
      url(r'^process_pack/(?P<pack_id>.*)/$', 'gh_tools.views.process_pack'),
     # url(r'^gh_tools/', include('gh_tools.foo.urls')),
 

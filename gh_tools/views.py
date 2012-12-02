@@ -182,6 +182,7 @@ def process_pack(request, pack_id=None):
 
 
 def pr_check(request):
+    print(request.method)
     if request.method == 'POST':
         url = request.POST.get('urlToCheck', None)
         if url:
@@ -191,4 +192,17 @@ def pr_check(request):
         return HttpResponseRedirect('/pr_check/')
     else:
         return render_to_response('pr_check.html',
+            {}, context_instance=RequestContext(request))
+
+def bing_grabber(request):
+    print(request.method)
+    if request.method == 'POST':
+        subject = request.POST.get('subjectToGrab', None)
+        if subject:
+            data = bing_grab(subject)
+            return render_to_response('bing_grab.html',
+            {'data': data, 'subject': subject}, context_instance=RequestContext(request))
+        return HttpResponseRedirect('/bing_grab/')
+    else:
+        return render_to_response('bing_grab.html',
             {}, context_instance=RequestContext(request))
