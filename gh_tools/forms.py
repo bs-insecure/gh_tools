@@ -20,6 +20,6 @@ class ArticlePackForm(forms.Form):
 
 class BlogForm(forms.Form):
     address = forms.CharField(label='Blog address')
-    username = forms.CharField(label='Username')
+    user = forms.CharField(label='Username')
     password = forms.CharField(label='Password')
     niche = forms.ModelChoiceField(queryset = NicheModel.objects.all(), label='Blog niche')

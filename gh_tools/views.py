@@ -10,6 +10,9 @@ from functools import wraps
 import json
 import tarfile
 
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.decorators.http import require_POST, require_GET
+
 from scripts import GetPageRank, bing_grab
 
 
@@ -138,7 +141,8 @@ def manage_articles(request):
     return render_to_response('manage_articles.html',
         {'articles': articles}, context_instance=RequestContext(request))
 
-def manage_blogs(request):
+
+def manage_blogs(request, blog_id=None):
     if request.method == 'POST':
         form = BlogForm(request.POST)
         if form.is_valid():
@@ -150,11 +154,29 @@ def manage_blogs(request):
             newblog.save()
             return HttpResponseRedirect('/manage_blogs/')
     else:
-        form = BlogForm()
+        initial_data = None
+        if blog_id:
+            try:
+                edit_blog = BlogModel.objects.get(pk=blog_id)
+                initial_data = edit_blog.get_data()
+            except Exception:
+                pass
+        form = BlogForm(initial_data)
+        blogs = BlogModel.objects.all()
+        return render_to_response('manage_blogs.html',
+            {'blogs': blogs, 'form': form}, context_instance=RequestContext(request))
 
-    blogs = BlogModel.objects.all()
-    return render_to_response('manage_blogs.html',
-        {'blogs': blogs, 'form': form}, context_instance=RequestContext(request))
+
+@require_GET
+@login_required
+def remove_blog(request, blog_id):
+    try:
+        blog = BlogModel.objects.get(pk=blog_id)
+        blog.delete()
+    except Exception:
+        pass
+    return HttpResponseRedirect('/manage_blogs/')
+
 
 @json_view
 def process_pack(request, pack_id=None):

@@ -5,6 +5,18 @@
         $(document).ready(function() { 
             var jquery_form_options = {target:'#form_container'};
             $('#add_blog_form').ajaxForm(jquery_form_options);
+            
+            $('.edit-blog').on('click', function(){
+                var $this = $(this);
+                var blog_id = $this.closest('tr').data('blogid');
+				loadForm('/manage_blogs/'+blog_id, $("#form_container"), $("#loading-placeholder"));
+            })
+            
+            $('.remove-blog').on('click', function(){
+                var $this = $(this);
+                var blog_id = $this.closest('tr').data('blogid');
+				loadForm('/remove_blog/'+blog_id, $("#form_container"), $("#loading-placeholder"));
+            })
         });
     </script>
 {% endblock %}
@@ -23,14 +35,14 @@
             </tr>
         </thead>
         {% for blog in blogs %}
-        <tr>
+        <tr data-blogid="{{ blog.pk }}">
             <td>{{ blog.address }}</td>
             <td>{{ blog.niche.name }}</td>
             <td>{{ blog.user }}</td>
             <td>{{ blog.password }}</td>
             <td>
-                <a id="edit" ><img src="../site_media/img/edit.png"></a>
-                <a id="remove" ><img src="../site_media/img/remove.png"></a>
+                <a id="edit" class="edit-blog"><img src="../site_media/img/edit.png"></a>
+                <a id="remove" class="remove-blog" ><img src="../site_media/img/remove.png"></a>
             </td>
         </tr>
         {% endfor %}
@@ -56,10 +68,10 @@
                     </div>
                  </div>
                  <div class="control-group">
-                    <label class="control-label" for="inputEmail">{{ form.username.label_tag }}</label>
+                    <label class="control-label" for="inputEmail">{{ form.user.label_tag }}</label>
                     <div class="controls">
-                        {{ form.username }}
-                        {{ form.username.errors }}
+                        {{ form.user }}
+                        {{ form.user.errors }}
                     </div>
                  </div>
 		        </td>

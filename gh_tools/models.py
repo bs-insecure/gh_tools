@@ -42,6 +42,10 @@ class BlogModel(models.Model):
     user = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     niche = models.ForeignKey(NicheModel, blank=True, null=True)
-    
+
     def __unicode__(self):
         return self.address
+
+    def get_data(self):
+        return {'address': self.address, 'user': self.user, 'password': self.password, 'niche': self.niche_id}
+        
