@@ -54,6 +54,7 @@ def logout_page(request):
     logout(request)    
     return HttpResponseRedirect('/home/')
 
+
 @json_view
 def account_page(request):
     if request.method == 'POST': # If the form has been submitted...
@@ -85,7 +86,8 @@ def account_page(request):
     else:
         form = AccountForm() 
         return render_to_response('account.html', {'form': form,}, context_instance=RequestContext(request))
-            
+
+
 def login_page(request):
     def errorHandle(error):
         form = LoginForm()
@@ -148,7 +150,7 @@ def manage_blogs(request, blog_id=None):
         if form.is_valid():
             niche = NicheModel.objects.get(id=int(request.POST['niche']))
             newblog = BlogModel(address=request.POST['address'],
-                                user=request.POST['username'],
+                                user=request.POST['user'],
                                 password=request.POST['password'],
                                 niche=niche)
             newblog.save()
@@ -164,7 +166,40 @@ def manage_blogs(request, blog_id=None):
         form = BlogForm(initial_data)
         blogs = BlogModel.objects.all()
         return render_to_response('manage_blogs.html',
-            {'blogs': blogs, 'form': form}, context_instance=RequestContext(request))
+            {'blogs': blogs, 'form': form, 'blog_id': blog_id}, context_instance=RequestContext(request))
+
+
+@json_view
+def post_article(request):
+    if request.method == 'POST':
+        print('posted')
+    else:
+        dirs = ['PortalArticole.ro', 'EArticole.com']
+        blogs = []
+        blog_list = BlogModel.objects.all()
+        for blog in blog_list:
+            blogs.append({'id': blog.pk, 'value': blog.address})
+        
+        return render_to_response('post_article.html',
+            {'blogs': json.dumps(blogs), 'dirs': json.dumps(dirs)}, context_instance=RequestContext(request))
+
+
+@json_view
+def article_list(request, blog_id=None):
+    ret = {'status': 'error', "data": []}
+    if blog_id:
+        try:
+            blog = BlogModel.objects.get(pk=blog_id)
+            articles = ArticleModel.objects.filter(niche=blog.niche)
+            for article in articles:
+                ret["data"].append({'id': article.id, 'title': article.title, 
+                                    'text': article.text})
+            ret['status'] = 'ok';
+        except Exception, e:
+            print(e)
+            pass
+    
+    return ret
 
 
 @require_GET

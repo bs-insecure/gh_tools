@@ -26,6 +26,8 @@
     <script src="../site_media/js/bootstrap.min.js"></script>
     <script src="../site_media/js/knockout-2.1.0.js"></script>
     <script src="../site_media/js/knockout.validation.js"></script>
+    <script type="text/javascript" src="/site_media/js/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="/site_media/js/ckeditor/adapters/jquery.js"></script>
     <script src="../site_media/js/ko_main.js"></script>
     <script type="text/javascript">
     	$(document).ready(function(){
@@ -50,6 +52,9 @@
             });
             $('#bing_grab').click(function(){
                 loadForm('/bing_grab/', formContainer, loader);
+            });
+            $('#post_article').click(function(){
+                loadForm('/post_article/', formContainer, loader);
             });
             
 	    	{% block js %}
@@ -110,6 +115,7 @@
                         </ul>
                         <ul class="nav nav-list">
                             <li class="nav-header">Tools</li>
+                            <li><a id="post_article">Post Article</a></li>
                             <li><a id="pr_check">Page Rank Check</a></li>
                             <li><a id="bing_grab">Bing Grabber</a></li>
                         </ul>

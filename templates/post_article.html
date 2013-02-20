@@ -1,0 +1,59 @@
+{% block head %}
+    <style type="text/css"></style>
+    <title>Upload article pack</title>  
+    <script type="text/javascript">
+    blog_list = jQuery.parseJSON('{{ blogs|safe }}');
+    raw = {{ dirs|safe }};
+    dirs = {{ dirs|safe }};
+        $(document).ready(function() { 
+            updateCK('article_text');
+        	var viewModel = new PostArticleViewModel(blog_list, dirs);
+        	ko.applyBindings(viewModel);
+            var jquery_form_options = {target:'#form_container'};
+            $('#post_article_form').ajaxForm(jquery_form_options);
+        });
+    </script>
+{% endblock %}
+{% block content %}
+    <fieldset>
+    <legend>Post an article</legend>
+    <form id="post-article-form" class="form-horizontal">
+    	<div style="display:inline;">
+    		<div class="span3">
+	    		<label>Choose a blog:</label>
+		        <select id='blog' data-bind="options: blog_list,
+		        							optionsText: function(item) { return item.value;},
+		        							optionsValues: function(item) { return item.id;},
+		        							 value: selected_blog"></select>
+		    </div>
+	
+	    	<div class="span3">
+		        <label>Choose an article:</label>
+		        <select id='article' data-bind="options: articles,
+		        								optionsText: function(item) { return item.title;},
+		        								optionsValues: function(item) { return item.id;},
+		        							 	value: selected_article"></select>
+			</div>
+    		<div class="span3">
+		    	<label>Choose a directory:</label>
+		        <select id='directory' data-bind="options: dir_list,
+		        							 	value: selected_dir"></select>
+		    </div>
+		    <div class="span3">
+		    	<label>Post the article:</label>
+		    	<a class="btn" data-bind="click: submit" onclick="return false;"> Submit </a>
+		    </div>
+	    </div>
+	    <br>
+	    <div class="span12" style="margin-left:0px;margin-top:10px;">
+        	<textarea rows="4" cols="100" id='article_text' name='article_text'>
+       	</div>
+    </form>
+    </fieldset>
+{% endblock %}
+
+
+
+
+
+

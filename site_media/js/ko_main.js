@@ -95,6 +95,16 @@ function getCookie(name) {
     return cookieValue;
 }
 
+
+var updateCK = function(element_id){
+    if (CKEDITOR.instances[element_id]) {
+        delete CKEDITOR.instances[element_id]
+    };
+    if ($("#" + element_id).lenght || $("textarea[name='"+ element_id +"']").length)
+        CKEDITOR.replace(element_id, { customConfig: '/site_media/js/ckeditor/rims_config.js'});
+};
+
+
 //ko model
 //feed the error property with a value and all other properties
 //change their values accordingly
@@ -141,6 +151,65 @@ function loadForm(url, el, loader){
         loader.hide();
         el.fadeIn(1000);
     });
+}
+
+function PostArticleViewModel(blog_list, dirs)
+{
+var self = this;
+
+self.blog_list = ko.observableArray(blog_list);
+self.dir_list = ko.observableArray(dirs);
+self.articles = ko.observableArray();
+self.selected_blog = ko.observable();
+self.selected_article = ko.observable();
+self.selected_article_text = ko.observable();
+self.selected_dir = ko.observable();
+
+
+self.selected_blog.subscribe(function(val){
+	$.getJSON('/article_list/'+val.id, function(data) {
+			if (data.status == 'ok'){
+				self.articles(data.data);
+			}
+		});
+})
+
+self.selected_article.subscribe(function(val){
+	CKEDITOR.instances['article_text'].setData(val.text);
+})
+
+self.countErrors = function(){
+	return self.errors().length
+}
+
+self.post_data = function(){
+	return {
+			blog: self.selected_blog().id,
+			article: self.selected_article().id,
+			directory: self.selected_dir(),
+			content: CKEDITOR.instances['article_text'].getData()
+	}
+}
+
+
+self.submit = function() {
+	var csrftoken = getCookie('csrftoken');
+	$.ajaxSetup({
+	    crossDomain: false, // obviates need for sameOrigin test
+	    beforeSend: function(xhr, settings) {
+	        if (!csrfSafeMethod(settings.type)) {
+	            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+	        }
+	    }
+	});
+    $.post( '/post_article/', $.param(ko.toJS(self.post_data()), true), function(data){
+        response = $.parseJSON(data);
+        self.response_status(response.status);
+        self.response_message(response.message);
+        }
+    );
+}
+
 }
 
 function AccountViewModel()
