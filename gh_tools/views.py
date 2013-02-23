@@ -200,7 +200,7 @@ def article_list(request, blog_id=None):
             articles = ArticleModel.objects.filter(niche=blog.niche)
             for article in articles:
                 ret["data"].append({'id': article.id, 'title': article.title, 
-                                    'text': mark_safe(article.text)})
+                                    'text': mark_safe( unescape(article.text))})
             ret['status'] = 'ok';
         except Exception, e:
             print(e)
@@ -235,7 +235,7 @@ def process_pack(request, pack_id=None):
                                 title = title[title.index('/')+1:]
                             if '.' in title:
                                 title = title[0:title.index('.')]
-                            newarticle = ArticleModel(title = title[:100], text = unescape(tar.extractfile(member.name).read()), niche=pack.niche)
+                            newarticle = ArticleModel(title = title[:100], text = tar.extractfile(member.name).read(), niche=pack.niche)
                             newarticle.save()
                     except Exception,e:
                         print e
