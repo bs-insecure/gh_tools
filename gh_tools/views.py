@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
+from django.utils.safestring import mark_safe
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from forms import LoginForm, AccountForm, ArticlePackForm, BlogForm
@@ -14,6 +15,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST, require_GET
 
 from scripts import GetPageRank, bing_grab
+
+from utils import unescape
 
 
 def json_view(func):
@@ -114,7 +117,9 @@ def login_page(request):
     else:
         form = LoginForm() # An unbound form
         return render_to_response('login.html', {'form': form,}, context_instance=RequestContext(request))
-    
+
+
+
 def upload_article(request):
     if request.method == 'POST':
         form = ArticlePackForm(request.POST, request.FILES)
@@ -135,6 +140,8 @@ def upload_article(request):
         'upload_article.html',
         {'packs': packs, 'form': form},
         context_instance=RequestContext(request))
+
+
 
 def manage_articles(request):
     articles = ArticleModel.objects.all()
@@ -193,12 +200,11 @@ def article_list(request, blog_id=None):
             articles = ArticleModel.objects.filter(niche=blog.niche)
             for article in articles:
                 ret["data"].append({'id': article.id, 'title': article.title, 
-                                    'text': article.text})
+                                    'text': mark_safe(article.text)})
             ret['status'] = 'ok';
         except Exception, e:
             print(e)
             pass
-    
     return ret
 
 
@@ -222,18 +228,22 @@ def process_pack(request, pack_id=None):
                 tar = tarfile.open(pack.packfile.path, 'r:tar')
                 members = tar.getmembers()
                 for member in members:
-                    if member.isfile and member.size > 0 :
-                        title = member.name
-                        while '/' in title:
-                            title = title[title.index('/')+1:]
-                        if '.' in title:
-                            title = title[0:title.index('.')]
-                        newarticle = ArticleModel(title = title, text = tar.extractfile(member.name).read(), niche=pack.niche)
-                        newarticle.save()
+                    try:
+                        if member.isfile and member.size > 0 :
+                            title = member.name
+                            while '/' in title:
+                                title = title[title.index('/')+1:]
+                            if '.' in title:
+                                title = title[0:title.index('.')]
+                            newarticle = ArticleModel(title = title[:100], text = unescape(tar.extractfile(member.name).read()), niche=pack.niche)
+                            newarticle.save()
+                    except Exception,e:
+                        print e
                 pack.processed = True
                 pack.save()
                 return {'status':'success'}
-            except Exception:
+            except Exception, e:
+                print e
                 return {'status':'error'}
     return {'status': 'error'}
 

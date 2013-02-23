@@ -7,7 +7,7 @@
     dirs = {{ dirs|safe }};
         $(document).ready(function() { 
             updateCK('article_text');
-        	var viewModel = new PostArticleViewModel(blog_list, dirs);
+        	viewModel = new PostArticleViewModel(blog_list, dirs);
         	ko.applyBindings(viewModel);
             var jquery_form_options = {target:'#form_container'};
             $('#post_article_form').ajaxForm(jquery_form_options);
@@ -34,11 +34,6 @@
 		        								optionsValues: function(item) { return item.id;},
 		        							 	value: selected_article"></select>
 			</div>
-    		<div class="span3">
-		    	<label>Choose a directory:</label>
-		        <select id='directory' data-bind="options: dir_list,
-		        							 	value: selected_dir"></select>
-		    </div>
 		    <div class="span3">
 		    	<label>Post the article:</label>
 		    	<a class="btn" data-bind="click: submit" onclick="return false;"> Submit </a>
@@ -46,7 +41,7 @@
 	    </div>
 	    <br>
 	    <div class="span12" style="margin-left:0px;margin-top:10px;">
-        	<textarea rows="4" cols="100" id='article_text' name='article_text'>
+        	<textarea rows="4" cols="100" id='article_text' name='article_text'></textarea>
        	</div>
     </form>
     </fieldset>

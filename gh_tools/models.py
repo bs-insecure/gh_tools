@@ -16,21 +16,21 @@ class ArticlePackModel(models.Model):
     submit = models.DateField('Submit', auto_now_add=True, editable=False)
     processed = models.BooleanField('Processed')
     niche = models.ForeignKey(NicheModel, blank=True, null=True)
-    
+
     def __unicode__(self):
         return self.description
 
 
 class ArticleModel(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=200)
     text = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
-    slug = models.SlugField(max_length=150, unique=True)
+    slug = models.SlugField(max_length=200)
     niche = models.ForeignKey(NicheModel, blank=True, null=True)
-    
+
     def __unicode__(self):
         return self.title
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
@@ -48,4 +48,3 @@ class BlogModel(models.Model):
 
     def get_data(self):
         return {'address': self.address, 'user': self.user, 'password': self.password, 'niche': self.niche_id}
-        
